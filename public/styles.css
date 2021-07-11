@@ -10,10 +10,13 @@ html,
 body {
     height: 100%;
     font-family: "Segoe UI",system-ui,"Apple Color Emoji","Segoe UI Emoji",sans-serif;
-    background-color: rgb(0, 0, 0);
+    background-color: rgb(7, 0, 0);
 }
 
 #video-grid {
+    background-image: url('bg4.jpg');
+
+    /* background-color: rgb(28, 1, 31); */
     display: flex;
     justify-content: center;
     height: 100%;
@@ -34,8 +37,9 @@ video {
     max-height: 400px ;
     background-color: black;
     box-shadow: rgba(0, 0, 0, 0.35) 15px 15px 25px;
-    /* border-radius: 15px; */
-    border: 2px solid #3d3d42;
+    border-radius: 15px;
+    border: 5px solid #3d3d42;
+    
 }
 
 .main {
@@ -53,19 +57,19 @@ video {
 
 .Controls {
     align-items: center;
-    left: 50%;
+    left: 48%;
     opacity: 0.86;
     justify-content: center;
     display: flex;
-    background-color: #000;
-    box-shadow: rgba(0, 0, 0, 0.35);
+    /* background-color: #000; */
+    /* box-shadow: rgba(0, 0, 0, 0.35); */
     border-radius: 80%; 
 
     color: #d2d2d2;
     padding: 5px;
     z-index: 10;
     position: fixed;
-    bottom: 77px;
+    bottom: 88px;
 
     /* opacity: 0.95;
     align-items: center;
@@ -80,14 +84,14 @@ video {
 
 .Controls_block {
     opacity: 0.86;
-    justify-content: center;
-    align-items: center;
+    /* justify-content: center; */
+    /* align-items: center; */
     display: flex;
     position: fixed;
     background-color: #000;
     box-shadow: rgba(0, 0, 0, 0.35);
     border-radius: 20px;
-    bottom: 77px; 
+    bottom: 20px; 
 }
 
 .Controls_button {
@@ -177,6 +181,7 @@ video {
     color: #fff;
     list-style: none;
     border: 1px solid #3d3d42;
+    border-radius: 10px;
     padding: 14px 10px 0px;
 }
 
@@ -192,6 +197,7 @@ video {
     color: #fff;
     list-style: none;
     border: 1px solid #3d3d42;
+    border-radius: 10px;
     padding: 14px 10px 0;
 }
 
@@ -200,8 +206,9 @@ video {
     flex: 0.35;
     /* display: flex; */
     flex-direction: column;
-    background-color: #242324;
-    border-left: 1px solid #3d3d42;
+    background-color: #000000;
+    border-left: 0.2px solid #3d3d42;
+    border-radius: 10px;
     display: flex;
     /* position: fixed; */
     width: 30%;
@@ -243,13 +250,15 @@ video {
     transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
     border: 2px solid black;
-    border-radius: 5px;
+    border-radius: 20px;
     padding: 14px;
 }
 
 .showInvite .invitePop input {
     border: 3px solid black;
     margin-right: 3px;
+    background-color: #282828;
+    color: #696969;
 }
 
 .showInvite .invitePop button{
@@ -259,13 +268,31 @@ video {
 
 /* record */
 
-record-option{
+.record-option{
     height: 200px;
     border-radius: 10%;
     border: 1px solid #02191d;
     cursor: pointer;
     padding: 10px;
     vertical-align: middle;
+}
+
+.record-option:hover{
+    color: #282828;
+}
+
+.participants{
+    display: none;
+    position: fixed;
+    z-index: 20000;
+    border: 1px solid #f4f5f5;
+    top: 25%;
+    left: 32.5%;
+    overflow: auto;
+    color: #f4f5f5;
+    background-color: rgb(12, 7, 0);
+    
+    border-radius: 10px;
 }
 
 
@@ -287,7 +314,7 @@ record-option{
     margin: 15% auto;
     padding: 20px;
     border: 1px solid #f4f5f5;
-    border-radius: 500px;
+    border-radius: 50px;
     width: 80%;
 }
 
@@ -305,6 +332,29 @@ record-option{
     background-color: #34383b;
 }
 .custom-modal #record-screen:hover{
+    background-color: #34383b;
+}
+
+.colored{
+    color: #323348;
+}
+
+#closeModal{
+   margin-top: 10px;
+}
+.closebtn{
+    left: 1000px;
+    justify-content: center;
+    background-color:black;
+    align-items: center;
+    width: 90px;
+    height: 30px;
+    font-size: small;
+    margin: auto;
+    display: flex;
+}
+
+.closebtn:hover {
     background-color: #34383b;
 }
 

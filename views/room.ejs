@@ -18,15 +18,36 @@
         // alert(room_id);
     </script>
 
-    <script defer src="https://unpkg.com/peerjs@1.2.0/dist/peerjs.min.js"></script>
-    <script src="/socket.io/socket.io.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/7.3.0/adapter.min.js"
-        integrity="sha256-2qQheewaqnZlXJ3RJRghVUwD/3fD9HNqxh4C+zvgmF4=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js'></script>
-    <script src='https://cdn.rawgit.com/yahoo/xss-filters/master/dist/xss-filters.js'></script>
+    
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+</script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+</script>
+<script defer src="https://unpkg.com/peerjs@1.2.0/dist/peerjs.min.js"></script>
+<script src="/socket.io/socket.io.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/7.3.0/adapter.min.js"
+integrity="sha256-2qQheewaqnZlXJ3RJRghVUwD/3fD9HNqxh4C+zvgmF4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js'></script>
+<script src='https://cdn.rawgit.com/yahoo/xss-filters/master/dist/xss-filters.js'></script>
     <script type="module" src="index.js" defer></script>
     <!-- <script src="FileSaver.js"></script> -->
+
+    <script>
+        $(window).on("load", function () {
+            $("#myModal").modal("show");
+        });
+        // $("form").submit(function (e) {
+        //     e.preventDefault();
+        //     $('#myModal').modal('hide')
+        // });
+    </script>
+
     <script>
 
 		function saveDynamicDataToFile() {
@@ -47,6 +68,34 @@
 </head>
 
 <body>
+
+    <div class="modal fade" id="myModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Your Name:</h5>
+                <!-- <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button> -->
+            </div>
+            <!-- <form action="/" method="POST"> -->
+                <div class="modal-body">
+                    <!-- <div class="form-row"> -->
+                        <input type="text" id="userName" placeholder="Name*" autocomplete="off">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="submitName" style="color: white; background-color:green; border-radius: 10px;align-items: center;">
+                        Enter the room
+                    </button>
+                </div>
+
+            <!-- </form> -->
+
+
+            </div>
+        </div>
+    </div>
+
     <audio src="chat_request.mp3" id="chatAudio"></audio>
     <div class="overlay" id="hideInvitePopup">
         <!-- onclick="hideInvitePopup()" -->
@@ -65,26 +114,18 @@
             <div class="Controls">
 
                 <div class="Controls_block">
-                    <div class="Controls_button" id="muteButton">
-                        <!-- onclick="muteUnmute()" -->
+                    <div class="Controls_button" id="muteButton" title="Mute/Unmute">
                         <i class="fa fa-microphone"></i>
-                        <!-- <span>Mute</span> -->
                     </div>
-                    <div class="Controls_button" id="playPauseVideo">
-                        <!-- onclick="playStop()" -->
+                    <div class="Controls_button" id="playPauseVideo" title="Play/Pause">
                         <i class="fa fa-video"></i>
-                        <!-- <span>Pause Video</span> -->
                     </div>
                
-                    <div class="Controls_button" id="chat_btn">
-                        <!-- onclick="Showchat(this) -->
+                    <div class="Controls_button" id="chat_btn" title="Chat">
                         <i class="fa fa-comment"></i>
-                        <!-- <span>Chat</span> -->
                     </div>
-                    <div class="Controls_button" id='show_invite'>
-                        <!-- onclick="showinvite()" -->
+                    <div class="Controls_button" id='show_invite' title="Invite Users">
                         <i class="fa fa-user-plus"></i>
-                        <!-- <span>Invite people</span> -->
                     </div>
                     
                     <div class="Controls_button" id="share-screen" title="Share screen">
@@ -93,8 +134,10 @@
                     </div>
                     <div class="Controls_button" id="record" title="Record">
                         <i class="fa fa-dot-circle text-white"></i>
-                        <!-- <span>Record</span> -->
                     </div> 
+                    <div class="Controls_button" id="Participants" title="Participants">
+                        <i class="fa fa-users"></i>
+                    </div>
                     <a href="/close">
                         <!-- <div class="Controls_block"> -->
 
@@ -127,26 +170,54 @@
 
     <!-- <script src="script.js" defer></script> -->
     <!-- <script src="script.js"></script> -->
-</body>
-
-</html>
 
 
-<div class="custom-modal" id='recording-options-modal'>
-    <div class="custom-modal-content">
-        <div class="row text-center">
-            <div class="col-md-6 mb-2">
-                <span class="record-option" id='record-video'>Record video</span>
+<!--  -->
+    <div class="custom-modal" id='recording-options-modal'>
+        <div class="custom-modal-content">
+            <div class="row text-center">
+                <div class="col-md-6 mb-2">
+                    <span class="record-option" id='record-video'>Record video</span>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <span class="record-option" id='record-screen'>Record screen</span>
+                </div>
             </div>
-            <div class="col-md-6 mb-2">
-                <span class="record-option" id='record-screen'>Record screen</span>
-            </div>
-        </div>
 
-        <div class="row mt-3">
-            <div class="col-md-12 text-center">
-                <button class="btn btn-outline-danger" id='closeModal'>Close</button>
+            <div class="row mt-3">
+                <div class="col-md-12 text-center">
+                    <button class="btn btn-outline-danger" id='closeModal'>Close</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+    
+    <div class="participants" id="participants_div">
+        <div id="users_table">
+            <table class="table" style="width:500px; color: aliceblue;">
+                
+                <thead>
+                  <tr>
+                    
+                    <!-- <th scope="col">Id</th> -->
+                    <th scope="col">Participants:</th>
+                  </tr>
+                </thead>
+                <tbody id="users_body">
+        
+                    <tr>
+                    
+                    <td>Mark</td>
+                    <td>Otto</td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+
+        <button class="closebtn" id='close_participants'><i class="fa fa-times text-white"></i></button>
+
+    </div>
+</body>
+
+</html> 
+

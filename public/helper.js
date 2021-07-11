@@ -21,6 +21,49 @@ export default{
         }
     },
 
+
+
+    adjustGrid(){
+        let totalUsers = document.getElementsByTagName("video").length;
+        let elements =  document.getElementsByTagName("video");
+        // if(totalUsers === 1) {
+        //     elements[0].style.maxHeight = "400px";
+        //     elements[0].style.maxWidth = "600px";
+        // }
+        if(totalUsers <=1 ) {elements[0].style.maxWidth = "600px"}
+         if (totalUsers > 1) {
+            if (elements[0].style.removeProperty) {
+                elements[0].style.removeProperty('max-width');
+            } else {
+                elements[0].style.removeAttribute('max-width');
+            }
+
+
+
+            for (let i = 0; i < totalUsers; i++) {
+               
+                elements[i].classList.add("col-4");
+    
+    
+                if(totalUsers >=4){
+                    elements[i].style.maxHeight = "300px"
+                } 
+    
+                else if(totalUsers >=3){
+                    elements[i].style.maxHeight = "350px"
+                }
+    
+                else if(totalUsers >= 2){
+                    elements[i].style.maxHeight = "400px";
+                }
+                // elements[i].style.width = 100 / totalUsers + "%";
+                //adjusting width of videos acc to no of users
+                //this fits all video in one line evenly dividing their widths.
+            }
+        }
+    },
+
+
     setStopVideo() {
         const text = `<i class = "fa fa-video"></i>`
         document.getElementById('playPauseVideo').innerHTML = text;
@@ -46,24 +89,32 @@ export default{
         document.body.classList.toggle('showchat')
     },
     
+
+    has_new(state){
+        let e = document.getElementById('chat_btn');
+        if(state){
+            e.children[0].classList.add( 'text-danger' );
+            e.children[0].classList.remove( 'text-white' );
+        }
+        else{
+            e.children[0].classList.add( 'text-white' );
+            e.children[0].classList.remove( 'text-danger' );
+        }
+    },
+
+
     playChatSound(){
         const chatSound = document.getElementById('chatAudio');
         chatSound.play();
     },
     
-    saveDynamicDataToFile() {
 
-        var userInput = document.getElementById("all_msgs").value;
-        
-        var blob = new Blob([userInput], { type: "text/plain;charset=utf-8" });
-        saveAs(blob, "chat.txt");
-    },
 
-    speakText(msg) {
-        const Msg = new SpeechSynthesisUtterance();
-        Msg.text = msg;
-        window.speechSynthesis.speak(Msg);
-    },
+    // speakText(msg) {
+    //     const Msg = new SpeechSynthesisUtterance();
+    //     Msg.text = msg;
+    //     window.speechSynthesis.speak(Msg);
+    // },
 
     shareScreen() {
         if ( this.userMediaAvailable() ) {
@@ -151,4 +202,20 @@ export default{
 
         saveAs( file );
     },
+
+
+
+    checkInput(){
+        let value =  $("#userName").val()
+        // document.getElementById("userName").val(); 
+        
+        if( value.trim().length ) {
+            console.log(value.trim());
+            return value.trim();
+        }
+        else return false;
+        
+    },
+
+
 }

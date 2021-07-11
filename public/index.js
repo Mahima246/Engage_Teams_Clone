@@ -27,7 +27,7 @@ peer.on('open', id => {
 });
 
 // INITIAL STATES
-
+var my_name = "";
 var myVideostream;
 var currentuserId;
 var pendingMsg = 0;
@@ -37,6 +37,7 @@ var record = '';
 var recordedStream = [];
 var mediaRecorder = '';
 var currentPeer = [];
+var names_ids = {};
 
 
 // VIDEO AND AUDIO EXCHANGE
@@ -66,6 +67,7 @@ help.getUserFullMedia().then((stream) => {
         
         call.on('close', () => {
             video.remove();
+            help.adjustGrid();
             //window.refresh
         });
 
@@ -84,12 +86,31 @@ help.getUserFullMedia().then((stream) => {
     socket.on('user-disconnected', (userid) => {
         if (peers[userid]) {peers[userid].close();delete peers[userid];console.log(peers);}
         // help.speakText(`user ${userid} left`);
+        // help.speakText(`${names_ids[userid]} left`);
+        if(names_ids[userid]) {delete names_ids[userid];}
         // Jisne call ki thi voh leave krta h toh pnga h abhi 
     });
 
 }).catch((e) => {
     console.error(`stream error: ${ e }`);
 });
+
+
+socket.on('nameReceived',(names)=>{
+    if(!(names.id in names_ids) ){
+    names_ids[names.id] = names.name;}
+    console.log(names_ids);
+    socket.emit('nameSend',{
+        name: my_name,
+        id: currentuserId,
+    });
+})
+
+socket.on('nameSended',(names)=>{
+    if(!(names.id in names_ids) ){
+        names_ids[names.id] = names.name;}
+})
+
 
 
 // CHAT
@@ -101,20 +122,22 @@ socket.on('createMessage', (message) => {
         
         li.classList.add('otherUser');
         //this is for keeping the css different.
-        li.innerHTML = `<div><b>User(<small>${message.user}</small>):</b>${message.msg}</div>` + "\n";
+        li.innerHTML = `<div><b>${names_ids[message.user]}:</b>${message.msg}</div>` + "\n";
     } else {
         li.classList.add('Me');
-        li.innerHTML = `<div><b>Me:</b>${message.msg}</div>` + "\n" ;
+        li.innerHTML = `<div><b>${my_name}:</b>${message.msg}</div>` + "\n" ;
     }
     all_messages.append(li);
     chat_window.scrollTop = chat_window.scrollHeight;
     if (message.user != currentuserId) {
         pendingMsg++;
         help.playChatSound();
+        help.has_new(true);
         document.getElementById('chat_btn').classList.add('has_new');
-        document.getElementById(
-            'chat_btn'
-        ).children[1].innerHTML = `Chat (${pendingMsg})`;
+        // document.getElementById(
+        //     'chat_btn'
+        // ).children[1].innerHTML = `Chat (${pendingMsg})`
+        ;
     }
 });
 
@@ -144,6 +167,7 @@ document.getElementById('sendMsg').addEventListener('click', (e) => {
 });
 
 chatInputs.addEventListener('focus', () => {
+    help.has_new(false);
     document.getElementById('chat_btn').classList.remove('has_new'); //isse chat pe jo dot aata, it is removed but only when the box jisme msg type krte h get focus.
     pendingMsg = 0;
     document.getElementById('chat_btn').children[1].innerHTML = `Chat`;
@@ -162,20 +186,15 @@ const addvideoStream = (videoT1, stream, U_id = "") => {
 
     videoT1.srcObject = stream;
     videoT1.id = U_id;
+    
+    videoT1.class = "Video";
+    videoT1.title = U_id;
     videoT1.addEventListener("loadedmetadata", () => {
         //only when all the meta data is loaded , stream has arrived we play the video.
         videoT1.play();
     });
     videoGrid.append(videoT1);
-    console.log(videoGrid);
-    let totalUsers = document.getElementsByTagName("video").length;
-    if (totalUsers > 1) {
-        for (let i = 0; i < totalUsers; i++) {
-            document.getElementsByTagName("video")[i].style.width = 100  + "%";
-            //adjusting width of videos acc to no of users
-            //this fits all video in one line evenly dividing their widths.
-        }
-    }
+    help.adjustGrid();
 
 };
 
@@ -291,6 +310,63 @@ document.getElementById('chat_btn').addEventListener('click',(e) => {
     help.Showchat(el);
 })
 
+
+document.getElementById('Participants').addEventListener('click',(e)=>{
+
+    var keys = Object.keys(names_ids);
+    var myList = '<tr>';
+    
+    keys.forEach((key, index) => {
+        console.log(`${key}: ${names_ids[key]}`);
+        // myList += '<th scope="col">'+names_ids.size+'</th>';
+        myList += '<th scope="col">'+names_ids[key]+'</th>';
+        myList += '</tr>';
+    });
+    
+    document.getElementById('users_body').innerHTML = myList;
+    help.toggleModal('participants_div',true);
+    console.log(myList);
+    // for (var i = 0; i < data[i]; i++) { 
+    //   myList += '<li>' + i + '=' + data[i] + '</li>'; 
+    // } 
+    // myList += '</ul>';
+    // test.innerHTML = myList;
+    
+    
+    });
+    
+    // var aTags = document.getElementsByTagName("video");
+    // console.
+    //     for (var i=0;i<aTags.length;i++){
+    //         aTags[i].addEventListener('mouseover',function(event){
+    //             console.log(event.target);
+    //         })
+    //     }
+    
+    
+    document.getElementById('video-grid').addEventListener('mouseover',function(event){
+    if(event.target.tagName == "VIDEO")
+    {   
+        let id = event.target.getAttribute('id');
+        if(id === "Me") {
+            event.target.setAttribute("title",my_name);
+        }
+        else{
+            event.target.setAttribute("title",names_ids[id]);
+        }
+        
+        console.log(event.target.id);
+    }
+    
+    });
+    
+    
+    document.getElementById('close_participants').addEventListener('click',(e)=>{
+        help.toggleModal('participants_div',false);
+    });
+    
+
+
 // Invite people
 document.getElementById('show_invite').addEventListener('click',(e)=>{
     document.body.classList.add('showInvite');
@@ -329,9 +405,7 @@ document.getElementById('share-screen').addEventListener('click',(e)=>{
             })
             sender.replaceTrack(videoTrack);
         })
-        // videoTrack.onended() = function(){
-        //     stopScreenShare();
-        // }
+
 
         videoTrack.addEventListener( 'ended', () => {
             stopSharingScreen();
@@ -401,4 +475,32 @@ document.getElementById( 'closeModal' ).addEventListener( 'click', () => {
     help.toggleModal( 'recording-options-modal', false );
 
 } );
+
+document.getElementById('submitName').addEventListener('click',()=>{
+    let value = help.checkInput();
+    if(value){
+     my_name = value;
+     $('#myModal').modal('hide');
+     names_ids[currentuserId] = value;
+     socket.emit('name',{
+         name: value,
+         id: currentuserId,
+     });
+    }
+    console.log(value);
+});
+
+document.getElementById('submitName').addEventListener('keypress',(e)=>{
+    let value = help.checkInput();
+    if(e.key === 'Enter' && value){
+     my_name = value;
+     $('#myModal').modal('hide');
+     names_ids[currentuserId] = value;
+     socket.emit('name',{
+         name: value,
+         id: currentuserId,
+     });
+    }
+    console.log(value);
+});
 
