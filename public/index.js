@@ -13,12 +13,14 @@ myVideo.muted = true;
 
 
 // PEER CONNECTIONS
-const peer = new Peer(undefined, {
+var peer = new Peer( {
     secure: true,
     host: 'my-teamsclone.herokuapp.com',
     port:  443,
     path: '/peer-js',
 })
+
+
 
 // PEER CONNECTION TO PEER SERVER
 peer.on('open', id => {
