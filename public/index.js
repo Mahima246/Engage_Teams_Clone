@@ -17,7 +17,7 @@ const peer = new Peer(undefined, {
     secure: true,
     host: 'my-teamsclone.herokuapp.com',
     port:  443,
-    path: '/',
+    path: '/peer-js',
 })
 
 // PEER CONNECTION TO PEER SERVER
