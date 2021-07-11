@@ -21,12 +21,12 @@ var options = {
   allow_discovery: true,
 };
 let peerServer = ExpressPeerServer(server, options);
-app.use("/", peerServer);
+app.use("/peerjs", peerServer);
 
 
 app.set('view engine', 'ejs')
 // app.use(express.static('public'));
-// app.use('/peerjs',peerServer);                        //doubt
+app.use('/peerjs',peerServer);                        //doubt
 
 
 app.get('/', function (req, res) {
