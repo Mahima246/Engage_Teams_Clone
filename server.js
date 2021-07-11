@@ -12,7 +12,7 @@ const io = require('socket.io')(server);
 //     debug:true,
 // })
 const { PeerServer } = require('peer');
-const peerServer = PeerServer({ secure:true, host:'https://my-teamsclone.herokuapp.com/', port: 443, path: '/' });
+const peerServer = PeerServer({ secure:true, host:'https://my-teamsclone.herokuapp.com', port: 443, path: '/' });
 
 
 app.set('view engine', 'ejs')
