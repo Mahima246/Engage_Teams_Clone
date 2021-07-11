@@ -5,8 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "PROD=true node server.js",
-    "postinstall": "npm"
+    "start": "PROD=true node server.js"
   },
   "author": "",
   "license": "ISC",
