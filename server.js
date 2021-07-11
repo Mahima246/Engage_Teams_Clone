@@ -7,14 +7,15 @@ const {
 const server = require('http').Server(app) 
 const io = require('socket.io')(server);
 
-// // const {ExpressPeerServer} = require('peer');          //doubt
-// // const peerServer = ExpressPeerServer(server,{
-// //     debug:true,
-// // })
+// const {ExpressPeerServer} = require('peer');          //doubt
+// const peerServer = ExpressPeerServer(server,{
+//     debug:true,
+// })
 // const { PeerServer } = require('peer');
+// const peerServer = PeerServer({ port: 3001, path: '/' });
 
 
-var ExpressPeerServer = require('peer').ExpressPeerServer;    
+var ExpressPeerServer = require("peer").ExpressPeerServer;    
 var options = {
   debug: true,
   allow_discovery: true,
@@ -23,15 +24,11 @@ let peerServer = ExpressPeerServer(server, options);
 app.use("/peerjs", peerServer);
 
 
-app.use(express.static('public'));
-// app.use('/peerjs',peerServer);                        //doubt
-// const peerServer = PeerServer({ secure:true, host:'my-teamsclone.herokuapp.com', port: 443, path: '/' });
-var peer = new Peer({
-    host: "my-teamsclone.herokuapp.com",
-    port: "",
-    path: "/peerjs",
-  });
 app.set('view engine', 'ejs')
+// app.use(express.static('public'));
+app.use('/peerjs',peerServer);                        //doubt
+
+
 app.get('/', function (req, res) {
     res.redirect(`/${uuidv4()}`);
 });
