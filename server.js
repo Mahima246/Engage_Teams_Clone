@@ -27,7 +27,7 @@ app.use(express.static('public'));
 // app.use('/peerjs',peerServer);                        //doubt
 // const peerServer = PeerServer({ secure:true, host:'my-teamsclone.herokuapp.com', port: 443, path: '/' });
 var peer = new Peer({
-    host: "yoursite.herokuapp.com",
+    host: "my-teamsclone.herokuapp.com",
     port: "",
     path: "/peerjs",
   });
