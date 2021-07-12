@@ -15,19 +15,17 @@ const io = require('socket.io')(server);
 // const peerServer = PeerServer({ port: 3001, path: '/' });
 
 
-var ExpressPeerServer = require("peer").ExpressPeerServer;    
-var options = {
-  debug: true,
-  allow_discovery: true,
-};
-let peerServer = ExpressPeerServer(server, options);
-app.use("/peerjs", peerServer);
+// var ExpressPeerServer = require("peer").ExpressPeerServer;    
+// var options = {
+//   debug: true,
+//   allow_discovery: true,
+// };
+// let peerServer = ExpressPeerServer(server, options);
+// app.use("/peerjs", peerServer);
 
 
 app.set('view engine', 'ejs')
-// app.use(express.static('public'));
-// app.use('/peerjs',peerServer);                        //doubt
-
+app.use(express.static('public'));
 
 app.get('/', function (req, res) {
     res.redirect(`/${uuidv4()}`);
