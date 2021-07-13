@@ -1,4 +1,4 @@
-import help from "./func.js";
+import help from "./script.js";
 const socket = io("/"); //visiting root route makes a socket connection
 
 // Maintaing the DOM
