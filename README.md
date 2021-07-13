@@ -1,5 +1,4 @@
 # Engage_Teams_Clone
-# Video Meeting
 
 ## Live Demo
 
