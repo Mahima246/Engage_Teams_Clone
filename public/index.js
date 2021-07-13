@@ -23,7 +23,12 @@ var peer = new Peer( {
     path: '/peer-js',
 })
 
-
+// LOCALHOST CONNECTIONS
+// const peer = new Peer(undefined, {
+//     host: 'localhost',
+//     port: '3001',
+//     path: '/',
+// })
 
 // PEER CONNECTION TO PEER SERVER
 peer.on('open', id => {
@@ -36,13 +41,14 @@ peer.on('open', id => {
 var my_name = "";
 var myVideostream;
 var currentuserId;
+var pendingMsg = 0;
 var peers = {};
- //peers is actually the array of calls for a particular peer to all other.
+var screen = '';
 var record = '';
+var recordedStream = [];
 var mediaRecorder = '';
 var currentPeer = [];
 var names_ids = {};
-
 
 // VIDEO AND AUDIO EXCHANGE
 help.getUserFullMedia().then((stream) => {
@@ -96,34 +102,6 @@ help.getUserFullMedia().then((stream) => {
 });
 
 
-//Entering our name in the beginning of the stream.
-document.getElementById('submitName').addEventListener('click',()=>{
-    let value = help.checkInput();
-    if(value){
-     my_name = value;
-     $('#myModal').modal('hide');
-     names_ids[currentuserId] = value;
-     socket.emit('name',{
-         name: value,
-         id: currentuserId,
-     });
-    }
-    console.log(value);
-});
-//submitting the name
-document.getElementById('submitName').addEventListener('keypress',(e)=>{
-    let value = help.checkInput();
-    if(e.key === 'Enter' && value){
-     my_name = value;
-     $('#myModal').modal('hide');
-     names_ids[currentuserId] = value;
-     socket.emit('name',{
-         name: value,
-         id: currentuserId,
-     });
-    }
-    console.log(value);
-});
 
 socket.on('nameReceived',(names)=>{
     if(!(names.id in names_ids) ){
@@ -164,6 +142,7 @@ socket.on('createMessage', (message) => {
         help.playChatSound();
         help.has_new(true);
         document.getElementById('chat_btn').classList.add('has_new');
+        ;
     }
 });
 
@@ -239,8 +218,53 @@ const connectNewUser = (userid, streams) => {
 
 
 
-// TOGGLE BUTTONS
+// Share screen
 
+const stopSharingScreen=()=>{
+    help.toggleShareIcons( false );
+    help.toggleScreenBtnDisabled(false);
+    let videoTrack = myVideostream.getVideoTracks()[0];
+    currentPeer.forEach((value)=>{
+        let sender = value.getSenders().find(function(s){
+            return s.track.kind == videoTrack.kind; 
+        })
+        sender.replaceTrack(videoTrack);
+    })
+
+}
+
+// recording
+
+const startRecording = ( stream )=> {
+    mediaRecorder = new MediaRecorder( stream, {
+        mimeType: 'video/webm;codecs=vp9'
+    } );
+
+    mediaRecorder.start( 1000 );
+    help.toggleRecordingIcons( true );
+
+    mediaRecorder.ondataavailable = function ( e ) {
+        recordedStream.push( e.data );
+    };
+
+    mediaRecorder.onstop = function () {
+        help.toggleRecordingIcons( false );
+
+        help.saveRecordedStream( recordedStream, currentuserId );
+
+        setTimeout( () => {
+            recordedStream = [];
+        }, 3000 );
+    };
+
+    mediaRecorder.onerror = function ( e ) {
+        console.error( e );
+    };
+}
+
+
+
+// TOGGLE BUTTONS
 // video
 document.getElementById('playPauseVideo').addEventListener('click', (e) => {
     e.preventDefault();
@@ -424,3 +448,30 @@ document.getElementById( 'closeModal' ).addEventListener( 'click', () => {
 });
 
 
+document.getElementById('submitName').addEventListener('click',()=>{
+    let value = help.checkInput();
+    if(value){
+     my_name = value;
+     $('#myModal').modal('hide');
+     names_ids[currentuserId] = value;
+     socket.emit('name',{
+         name: value,
+         id: currentuserId,
+     });
+    }
+    console.log(value);
+});
+
+document.getElementById('submitName').addEventListener('keypress',(e)=>{
+    let value = help.checkInput();
+    if(e.key === 'Enter' && value){
+     my_name = value;
+     $('#myModal').modal('hide');
+     names_ids[currentuserId] = value;
+     socket.emit('name',{
+         name: value,
+         id: currentuserId,
+     });
+    }
+    console.log(value);
+});

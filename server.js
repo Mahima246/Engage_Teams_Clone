@@ -8,6 +8,9 @@ const server = require('http').Server(app)
 const io = require('socket.io')(server);
 
 
+// const { PeerServer } = require('peer');
+// const peerServer = PeerServer({ port: 3001, path: '/' });
+
 
 
 //connections to run the server on localhost

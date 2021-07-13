@@ -5,7 +5,6 @@ export default{
         return !!( navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia );
     },
  
-    
     // Returns user media if available
     getUserFullMedia() {
         if ( this.userMediaAvailable() ) {
@@ -23,8 +22,7 @@ export default{
     },
 
 
-    //adjusting width of videos acc to no of users
-    //this fits all video in one line evenly dividing their widths.
+    //for auto adjusting the grid whenever new users add
     adjustGrid(){
         let totalUsers = document.getElementsByTagName("video").length;
         let elements =  document.getElementsByTagName("video");
@@ -40,9 +38,12 @@ export default{
                 elements[0].style.removeAttribute('max-width');
             }
 
+
+
             for (let i = 0; i < totalUsers; i++) {
                
                 elements[i].classList.add("col-4");
+    
     
                 if(totalUsers >=4){
                     elements[i].style.maxHeight = "300px"
@@ -56,41 +57,43 @@ export default{
                     elements[i].style.maxHeight = "400px";
                 }
                 // elements[i].style.width = 100 / totalUsers + "%";
-                
+                //adjusting width of videos acc to no of users
+                //this fits all video in one line evenly dividing their widths.
             }
         }
     },
 
-
-
-    //toggle functions
-
+    //stopping  the video
     setStopVideo() {
         const text = `<i class = "fa fa-video"></i>`
         document.getElementById('playPauseVideo').innerHTML = text;
     },
     
+    //playing the video
     setPlayVideo(){
         const text = `<i class = "fas fa-video-slash"></i>`
         document.getElementById('playPauseVideo').innerHTML = text;
     },
 
+    //muting 
     setMute() {
         const text = `<i class = "fa fa-microphone"></i>`
         document.getElementById('muteButton').innerHTML = text;
     },
     
+    //unmuting
     setUnmute(){
         const text = `<i class = "fas fa-microphone-slash"></i>`
         document.getElementById('muteButton').innerHTML = text;
     },
     
+    //chat display
     Showchat(e) {
         e.classList.toggle('active')
         document.body.classList.toggle('showchat')
     },
     
-    //display a new message
+    //chat has got a new message
     has_new(state){
         let e = document.getElementById('chat_btn');
         if(state){
@@ -103,20 +106,21 @@ export default{
         }
     },
 
-
-    //using SpeechSynthesisUtterance to speak 
-    speakText(msg) {
-        const Msg = new SpeechSynthesisUtterance();
-        Msg.text = msg;
-        window.speechSynthesis.speak(Msg);
-    },
-
+    //playing chat sound
     playChatSound(){
         const chatSound = document.getElementById('chatAudio');
         chatSound.play();
     },
     
 
+    //speaktext whenever anyone enters or leave
+    speakText(msg) {
+        const Msg = new SpeechSynthesisUtterance();
+        Msg.text = msg;
+        window.speechSynthesis.speak(Msg);
+    },
+
+    //sharing screen
     shareScreen() {
         if ( this.userMediaAvailable() ) {
             return navigator.mediaDevices.getDisplayMedia( {
@@ -136,6 +140,7 @@ export default{
         }
     },
 
+    //toggle share button
     toggleShareIcons( share ) {
         let shareIconElem = document.querySelector( '#share-screen' );
 
@@ -152,6 +157,8 @@ export default{
         }
     },
      
+
+    //button disabled
     toggleScreenBtnDisabled( x ) {
         // console.log('hey');
         if ( x === true ) {
@@ -162,10 +169,10 @@ export default{
             document.getElementById('share-screen').style.pointerEvents = 'auto';
             console.log('open');
          }
-       
+        // document.getElementById( 'share-screen' ).disabled = x;
     },
 
-    
+    //displaying names
     toggleModal( id, show ) {
         let el = document.getElementById( id );
 
@@ -180,6 +187,7 @@ export default{
         }
     },
 
+    //recording
     toggleRecordingIcons( isRecording ) {
         let e = document.getElementById( 'record' );
 
@@ -196,6 +204,7 @@ export default{
         }
     },
 
+    //saving recordded video
     saveRecordedStream( stream, user ) {
         let blob = new Blob( stream, { type: 'video/webm' } );
 
@@ -206,10 +215,10 @@ export default{
 
 
 
-
+    //checking input
     checkInput(){
         let value =  $("#userName").val()
-        document.getElementById("userName").val(); 
+        // document.getElementById("userName").val(); 
         
         if( value.trim().length ) {
             console.log(value.trim());
