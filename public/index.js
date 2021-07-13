@@ -1,23 +1,21 @@
-import help from "./helper.js";
+import help from "./func.js";
 const socket = io("/"); //visiting root route makes a socket connection
 
-// DOM
+// Maintaing the DOM
 const videoGrid = document.getElementById("video-grid");
 const chatInputs = document.getElementById("msg");
 const all_messages = document.getElementById("all_msgs");
 const leaveMeet = document.getElementById("leave-meeting");
 const chat_window = document.getElementById("msg_window");
 
-var myVideo = document.createElement("video"); //made a video element to append in doc 
+
+//created a video element to append in doc 
+var myVideo = document.createElement("video"); 
 myVideo.muted = true;
 
 
 // PEER CONNECTIONS
-
-
-
-
-
+// setting up peer connections to connect to the server hosted on heroku
 var peer = new Peer( {
     secure: true,
     host: 'peerheroku.herokuapp.com',
@@ -38,11 +36,9 @@ peer.on('open', id => {
 var my_name = "";
 var myVideostream;
 var currentuserId;
-var pendingMsg = 0;
 var peers = {};
-var screen = '';
+ //peers is actually the array of calls for a particular peer to all other.
 var record = '';
-var recordedStream = [];
 var mediaRecorder = '';
 var currentPeer = [];
 var names_ids = {};
@@ -58,7 +54,7 @@ help.getUserFullMedia().then((stream) => {
     peer.on('call', (call) => {
         console.log('call recievd');
         call.answer(stream)
-        //we will answer a coming call by giving our stream.//yahna we can ring popup to answer or not using socket.io
+        //Answer a coming call by giving our stream.
         console.log('call anserwred');
         console.log(call.peer);
 
@@ -67,20 +63,17 @@ help.getUserFullMedia().then((stream) => {
         const video = document.createElement('video');
 
 
-        call.on('stream', (comingVideoStream) => { //jisne call kia tha uski stream add krdi in video grid
-            console.log('got remotestream too! yay');
+        call.on('stream', (comingVideoStream) => { 
+            //Adding the video streams of the people present in the incoming call to our video grid
+            console.log('remotestream ');
             console.log(comingVideoStream);
-            addvideoStream(video, comingVideoStream,call.peer); //pass name of the user too if want
+            addvideoStream(video, comingVideoStream,call.peer); //pass name of the user 
         });
         
         call.on('close', () => {
             video.remove();
             help.adjustGrid();
-            //window.refresh
         });
-
-
-
     });
 
     // NEW PEER CONNECTED
@@ -93,16 +86,44 @@ help.getUserFullMedia().then((stream) => {
     // USER DISCONNECTED
     socket.on('user-disconnected', (userid) => {
         if (peers[userid]) {peers[userid].close();delete peers[userid];console.log(peers);}
-        // help.speakText(`user ${userid} left`);
+        //Speak out the name of the user that left the meet.
         // help.speakText(`${names_ids[userid]} left`);
         if(names_ids[userid]) {delete names_ids[userid];}
-        // Jisne call ki thi voh leave krta h toh pnga h abhi 
     });
 
 }).catch((e) => {
     console.error(`stream error: ${ e }`);
 });
 
+
+//Entering our name in the beginning of the stream.
+document.getElementById('submitName').addEventListener('click',()=>{
+    let value = help.checkInput();
+    if(value){
+     my_name = value;
+     $('#myModal').modal('hide');
+     names_ids[currentuserId] = value;
+     socket.emit('name',{
+         name: value,
+         id: currentuserId,
+     });
+    }
+    console.log(value);
+});
+//submitting the name
+document.getElementById('submitName').addEventListener('keypress',(e)=>{
+    let value = help.checkInput();
+    if(e.key === 'Enter' && value){
+     my_name = value;
+     $('#myModal').modal('hide');
+     names_ids[currentuserId] = value;
+     socket.emit('name',{
+         name: value,
+         id: currentuserId,
+     });
+    }
+    console.log(value);
+});
 
 socket.on('nameReceived',(names)=>{
     if(!(names.id in names_ids) ){
@@ -121,39 +142,33 @@ socket.on('nameSended',(names)=>{
 
 
 
-// CHAT
 
+// CHAT
+//sending and recieving messages using web sockets
 socket.on('createMessage', (message) => {
     console.log(message);
-    let li = document.createElement('li');
+    let msgli = document.createElement('li');
     if (message.user != currentuserId) {
-        
-        li.classList.add('otherUser');
-        //this is for keeping the css different.
-        li.innerHTML = `<div><b>${names_ids[message.user]}:</b>${message.msg}</div>` + "\n";
+        //to distinguish among the css of senders and receiver
+        msgli.classList.add('otherUser');
+        msgli.innerHTML = `<div><b>${names_ids[message.user]}:</b>${message.msg}</div>` + "\n";
     } else {
-        li.classList.add('Me');
-        li.innerHTML = `<div><b>${my_name}:</b>${message.msg}</div>` + "\n" ;
+        //to distinguish among the css of senders and receiver
+        msgli.classList.add('Me');
+        msgli.innerHTML = `<div><b>${my_name}:</b>${message.msg}</div>` + "\n" ;
     }
-    all_messages.append(li);
+    all_messages.append(msgli);
     chat_window.scrollTop = chat_window.scrollHeight;
     if (message.user != currentuserId) {
         pendingMsg++;
         help.playChatSound();
         help.has_new(true);
         document.getElementById('chat_btn').classList.add('has_new');
-        // document.getElementById(
-        //     'chat_btn'
-        // ).children[1].innerHTML = `Chat (${pendingMsg})`
-        ;
     }
 });
 
-
-
-
+//to send msgs vis enter key
 document.addEventListener('keypress', (e) => {
-    //sending msgs vis enter key
     if (e.key === 'Enter' && chatInputs.value != '') {
         socket.emit('message', {
             msg: chatInputs.value,
@@ -162,9 +177,8 @@ document.addEventListener('keypress', (e) => {
         chatInputs.value = '';
     }
 });
-
+// to send message via mouse click on button
 document.getElementById('sendMsg').addEventListener('click', (e) => {
-    // via mouse click on button
     if (chatInputs.value != '') {
         socket.emit('message', {
             msg: chatInputs.value,
@@ -173,37 +187,33 @@ document.getElementById('sendMsg').addEventListener('click', (e) => {
         chatInputs.value = '';
     }
 });
-
+//remove has new 
 chatInputs.addEventListener('focus', () => {
     help.has_new(false);
-    document.getElementById('chat_btn').classList.remove('has_new'); //isse chat pe jo dot aata, it is removed but only when the box jisme msg type krte h get focus.
+    document.getElementById('chat_btn').classList.remove('has_new'); 
     pendingMsg = 0;
     document.getElementById('chat_btn').children[1].innerHTML = `Chat`;
 });
 
 
 
-// Helpers
-
-//Save My stream
+//SAVE STREAM
 
 
-// Add stream to grid
+//Saving My stream and adding stream to grid
 const addvideoStream = (videoT1, stream, U_id = "") => {
-    //adding video elemnt and stream to the html and increasing total users.
-
+    //adding video element and stream to the html and increasing total users.
     videoT1.srcObject = stream;
     videoT1.id = U_id;
     
     videoT1.class = "Video";
     videoT1.title = U_id;
     videoT1.addEventListener("loadedmetadata", () => {
-        //only when all the meta data is loaded , stream has arrived we play the video.
+        //stream has arrived we play the video, only when all the meta data is loaded. 
         videoT1.play();
     });
     videoGrid.append(videoT1);
     help.adjustGrid();
-
 };
 
 // Calling the new user connected and adding it to our grid and peers array.
@@ -220,63 +230,12 @@ const connectNewUser = (userid, streams) => {
     });
     call.on('close', () => {
         video.remove();
-        //window.refresh
     });
     peers[call.peer] = call;
     currentPeer.push(call.peerConnection);
     console.log(call.peer);
     console.log(peers);
-
-
-    //peers is actually the array of calls for a particular peer to all other.
 };
-
-// Share screen
-
-const stopSharingScreen=()=>{
-    help.toggleShareIcons( false );
-    help.toggleScreenBtnDisabled(false);
-    let videoTrack = myVideostream.getVideoTracks()[0];
-    currentPeer.forEach((value)=>{
-        let sender = value.getSenders().find(function(s){
-            return s.track.kind == videoTrack.kind; 
-        })
-        sender.replaceTrack(videoTrack);
-    })
-
-}
-
-// recording
-
-const startRecording = ( stream )=> {
-    mediaRecorder = new MediaRecorder( stream, {
-        mimeType: 'video/webm;codecs=vp9'
-    } );
-
-    mediaRecorder.start( 1000 );
-    help.toggleRecordingIcons( true );
-
-    mediaRecorder.ondataavailable = function ( e ) {
-        recordedStream.push( e.data );
-    };
-
-    mediaRecorder.onstop = function () {
-        help.toggleRecordingIcons( false );
-
-        help.saveRecordedStream( recordedStream, currentuserId );
-
-        setTimeout( () => {
-            recordedStream = [];
-        }, 3000 );
-    };
-
-    mediaRecorder.onerror = function ( e ) {
-        console.error( e );
-    };
-}
-
-
-
 
 
 
@@ -296,8 +255,7 @@ document.getElementById('playPauseVideo').addEventListener('click', (e) => {
     }
 });
 
-// audio
-
+// Audio mute unumute
 document.getElementById('muteButton').addEventListener('click', (e) => {
     e.preventDefault();
     let enabled = myVideostream.getAudioTracks()[0].enabled;
@@ -308,8 +266,6 @@ document.getElementById('muteButton').addEventListener('click', (e) => {
         myVideostream.getAudioTracks()[0].enabled = true;
         help.setMute();
     }
-
-
 });
 
 // chat
@@ -319,6 +275,8 @@ document.getElementById('chat_btn').addEventListener('click',(e) => {
 })
 
 
+
+//PARTICIPANTS
 document.getElementById('Participants').addEventListener('click',(e)=>{
 
     var keys = Object.keys(names_ids);
@@ -334,25 +292,15 @@ document.getElementById('Participants').addEventListener('click',(e)=>{
     document.getElementById('users_body').innerHTML = myList;
     help.toggleModal('participants_div',true);
     console.log(myList);
-    // for (var i = 0; i < data[i]; i++) { 
-    //   myList += '<li>' + i + '=' + data[i] + '</li>'; 
-    // } 
-    // myList += '</ul>';
-    // test.innerHTML = myList;
-    
-    
     });
-    
-    // var aTags = document.getElementsByTagName("video");
-    // console.
-    //     for (var i=0;i<aTags.length;i++){
-    //         aTags[i].addEventListener('mouseover',function(event){
-    //             console.log(event.target);
-    //         })
-    //     }
-    
-    
-    document.getElementById('video-grid').addEventListener('mouseover',function(event){
+
+//close participants
+document.getElementById('close_participants').addEventListener('click',(e)=>{
+    help.toggleModal('participants_div',false);
+    });
+
+//mouseover video title
+document.getElementById('video-grid').addEventListener('mouseover',function(event){
     if(event.target.tagName == "VIDEO")
     {   
         let id = event.target.getAttribute('id');
@@ -367,24 +315,20 @@ document.getElementById('Participants').addEventListener('click',(e)=>{
     }
     
     });
-    
-    
-    document.getElementById('close_participants').addEventListener('click',(e)=>{
-        help.toggleModal('participants_div',false);
-    });
-    
 
 
 // Invite people
 document.getElementById('show_invite').addEventListener('click',(e)=>{
     document.body.classList.add('showInvite');
     document.getElementById("roomLink").value = window.location.href;
-});
+    });
 
 document.getElementById('hideInvitePopup').addEventListener('click',(e)=>{
     document.body.classList.remove('showInvite');
-});
+    });
 
+
+//copy to clipboard
 document.getElementById('copyToClipboard').addEventListener('click',(e)=>{
     var copytext = document.getElementById("roomLink");
 
@@ -395,8 +339,8 @@ document.getElementById('copyToClipboard').addEventListener('click',(e)=>{
     
 });
 
-// Share Screen
 
+// Share Screen
 document.getElementById('share-screen').addEventListener('click',(e)=>{
     e.preventDefault();
     help.shareScreen().then((stream)=>{
@@ -422,13 +366,11 @@ document.getElementById('share-screen').addEventListener('click',(e)=>{
     });
     });
 
-// Record
 
+// Record
+// Ask user what they want to record. and get the stream based on selection 
 document.getElementById( 'record' ).addEventListener( 'click', ( e ) => {
-    /**
-     * Ask user what they want to record.
-     * Get the stream based on selection and start recording
-     */
+
     if ( !mediaRecorder || mediaRecorder.state == 'inactive' ) {
         help.toggleModal( 'recording-options-modal', true );
     }
@@ -446,8 +388,7 @@ document.getElementById( 'record' ).addEventListener( 'click', ( e ) => {
 
 
     }
-} );
-
+});
 //When user choose to record screen
 document.getElementById( 'record-screen' ).addEventListener( 'click', () => {
     help.toggleModal( 'recording-options-modal', false );
@@ -462,8 +403,7 @@ document.getElementById( 'record-screen' ).addEventListener( 'click', () => {
             startRecording( screenStream );
         } ).catch( () => { } );
     }
-} );
-
+});
  //When user choose to record own video
 document.getElementById( 'record-video' ).addEventListener( 'click', () => {
     help.toggleModal( 'recording-options-modal', false );
@@ -471,44 +411,16 @@ document.getElementById( 'record-video' ).addEventListener( 'click', () => {
     if ( myVideostream && myVideostream.getTracks().length ) {
         startRecording( myVideostream );
     }
-
     else {
         help.getUserFullMedia().then( ( videoStream ) => {
             startRecording( videoStream );
         } ).catch( () => { } );
     }
-} );
-
+});
+//close recording 
 document.getElementById( 'closeModal' ).addEventListener( 'click', () => {
     help.toggleModal( 'recording-options-modal', false );
 
-} );
-
-document.getElementById('submitName').addEventListener('click',()=>{
-    let value = help.checkInput();
-    if(value){
-     my_name = value;
-     $('#myModal').modal('hide');
-     names_ids[currentuserId] = value;
-     socket.emit('name',{
-         name: value,
-         id: currentuserId,
-     });
-    }
-    console.log(value);
 });
 
-document.getElementById('submitName').addEventListener('keypress',(e)=>{
-    let value = help.checkInput();
-    if(e.key === 'Enter' && value){
-     my_name = value;
-     $('#myModal').modal('hide');
-     names_ids[currentuserId] = value;
-     socket.emit('name',{
-         name: value,
-         id: currentuserId,
-     });
-    }
-    console.log(value);
-});
 

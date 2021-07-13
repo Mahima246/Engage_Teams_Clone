@@ -7,7 +7,12 @@ const {
 const server = require('http').Server(app) 
 const io = require('socket.io')(server);
 
-// const {ExpressPeerServer} = require('peer');          //doubt
+
+
+
+//connections to run the server on localhost
+
+// const {ExpressPeerServer} = require('peer');          
 // const peerServer = ExpressPeerServer(server,{
 //     debug:true,
 // })

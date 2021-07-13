@@ -5,6 +5,7 @@ export default{
         return !!( navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia );
     },
  
+    
     // Returns user media if available
     getUserFullMedia() {
         if ( this.userMediaAvailable() ) {
@@ -22,7 +23,8 @@ export default{
     },
 
 
-
+    //adjusting width of videos acc to no of users
+    //this fits all video in one line evenly dividing their widths.
     adjustGrid(){
         let totalUsers = document.getElementsByTagName("video").length;
         let elements =  document.getElementsByTagName("video");
@@ -38,12 +40,9 @@ export default{
                 elements[0].style.removeAttribute('max-width');
             }
 
-
-
             for (let i = 0; i < totalUsers; i++) {
                
                 elements[i].classList.add("col-4");
-    
     
                 if(totalUsers >=4){
                     elements[i].style.maxHeight = "300px"
@@ -57,12 +56,14 @@ export default{
                     elements[i].style.maxHeight = "400px";
                 }
                 // elements[i].style.width = 100 / totalUsers + "%";
-                //adjusting width of videos acc to no of users
-                //this fits all video in one line evenly dividing their widths.
+                
             }
         }
     },
 
+
+
+    //toggle functions
 
     setStopVideo() {
         const text = `<i class = "fa fa-video"></i>`
@@ -89,7 +90,7 @@ export default{
         document.body.classList.toggle('showchat')
     },
     
-
+    //display a new message
     has_new(state){
         let e = document.getElementById('chat_btn');
         if(state){
@@ -103,18 +104,18 @@ export default{
     },
 
 
+    //using SpeechSynthesisUtterance to speak 
+    speakText(msg) {
+        const Msg = new SpeechSynthesisUtterance();
+        Msg.text = msg;
+        window.speechSynthesis.speak(Msg);
+    },
+
     playChatSound(){
         const chatSound = document.getElementById('chatAudio');
         chatSound.play();
     },
     
-
-
-    // speakText(msg) {
-    //     const Msg = new SpeechSynthesisUtterance();
-    //     Msg.text = msg;
-    //     window.speechSynthesis.speak(Msg);
-    // },
 
     shareScreen() {
         if ( this.userMediaAvailable() ) {
@@ -161,7 +162,7 @@ export default{
             document.getElementById('share-screen').style.pointerEvents = 'auto';
             console.log('open');
          }
-        // document.getElementById( 'share-screen' ).disabled = x;
+       
     },
 
     
@@ -205,9 +206,10 @@ export default{
 
 
 
+
     checkInput(){
         let value =  $("#userName").val()
-        // document.getElementById("userName").val(); 
+        document.getElementById("userName").val(); 
         
         if( value.trim().length ) {
             console.log(value.trim());
