@@ -2,7 +2,7 @@
 
 ## Live Demo
 
-[Video Chat](http://my-teamsclone.herokuapp.com/)
+[Video Chat](https://my-teamsclone.herokuapp.com/)
 
 ![Website](https://imgur.com/WswhpxB.jpg)
 
