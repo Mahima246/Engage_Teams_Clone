@@ -4,8 +4,6 @@
 
 [Video Chat](https://my-teamsclone.herokuapp.com/)
 
-![Website](https://imgur.com/WswhpxB.jpg)
-
 ### Features
 - No account needed
 - Unlimited users
