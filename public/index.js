@@ -20,7 +20,7 @@ var peer = new Peer( {
     secure: true,
     host: 'peerheroku.herokuapp.com',
     port:  443,
-    // path: '/peer-js',
+    path: '/peer-js',
 })
 
 
