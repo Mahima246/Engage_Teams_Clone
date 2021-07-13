@@ -5,8 +5,7 @@
 
 [Video Chat](http://my-teamsclone.herokuapp.com/)
 
-![Website](https://imgur.com/a/Sj6CvwY.jpg)
-
+![Website](https://imgur.com/WswhpxB.jpg)
 
 ### Features
 - No account needed
@@ -16,11 +15,6 @@
 - Record Screen or your own video and save it to local storage
 - Save your chat conversation
 - Everyting is peer-to-peer thanks to webrtc
-
-### Live Demo
-
-![Website](https://imgur.com/a/Sj6CvwY.jpg)
-
 
 ## Built With
 
