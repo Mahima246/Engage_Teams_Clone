@@ -5,13 +5,14 @@
 [Video Chat](https://my-teamsclone.herokuapp.com/)
 
 ### Features
-- No account needed
-- Unlimited users
-- Messaging chat and video streaming in real-time
-- Screen sharing to present documents, slides, and more
-- Record Screen or your own video and save it to local storage
-- Save your chat conversation
-- Everyting is peer-to-peer thanks to webrtc
+-No account is required.
+-Mutiple rooms
+-Audio and Video streaming in real time
+-Chat feature along with option to save your chats so that you can continue the conversation after meeting ends.
+-Screen Sharing
+-Record option (Record your own video or your screen) and save it your system storage.
+-Shows names of all the participants present.
+-Add participant button to share link.
 
 ## Built With
 
